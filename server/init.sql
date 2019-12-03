@@ -4,7 +4,7 @@ CREATE TABLE community (
 );
 
 CREATE TABLE members (
-    member  varchar(10),
-    value   int,
-    cid     int
+    member      varchar(10),
+    value       int,
+    community   int
 );
