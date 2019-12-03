@@ -1,0 +1,11 @@
+a b c 1
+b c d 1
+d e 2
+1 2 3 4 5
+2 3 4 5
+3 4 5
+4 5
+i ii iii iv v 1 a
+ii iii iv v
+iii iv v
+iv v
