@@ -14,3 +14,8 @@ In another terminal window, run:
 `yarn install` (if this is the first time setting it up)
 
 `yarn start`
+
+## generating database
+
+1. `createdb tiling_networks`
+2. In the database, run `\i init.sql`
