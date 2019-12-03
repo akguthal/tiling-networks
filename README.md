@@ -3,7 +3,7 @@
 To run this application, you must setup your database first. To do so, follow the following steps.
 
 1. Run `createdb tiling_networks`
-2. In the database, run `\i init.sql`
+2. In the database, run `\i server/init.sql`
 3. Then, still in the database, run the following two commands (replacing the path as appropriate):
     - `\copy community FROM './dataset/community-sql.csv' WITH CSV;`
     - `\copy members FROM './dataset/individual-sql.csv' WITH CSV;`
