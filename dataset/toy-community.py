@@ -35,13 +35,13 @@ for i in range(len(community_list)) :
     for member in community_list[i] :
         comm_aggregate += value_dictionary[member]
 
-    community_dict[i] = comm_aggregate
+    community_dict[i+1] = [comm_aggregate, 0]
 
 total_sum = 0
 for entry in community_dict :
-    total_sum += community_dict[entry]
+    total_sum += community_dict[entry][0]
 
-community_dict['root'] = total_sum
+community_dict[0] = [total_sum, -1]
 print(community_dict)
 
 with open('community-sql.csv',mode='w') as file :
@@ -49,7 +49,8 @@ with open('community-sql.csv',mode='w') as file :
 
     # we want two tables: one with our aggregates and one with our original data. this is the aggregates - so we just need the communities and their sums
     for key in community_dict :
-        output.writerow([key, community_dict[key]])
+        # writes the key, the summed value, and the parent
+        output.writerow([key, community_dict[key][0], community_dict[key][1]])
 
 with open('individual-sql.csv',mode='w') as file :
     output = csv.writer(file)

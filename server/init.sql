@@ -1,6 +1,7 @@
 CREATE TABLE community (
-    cid int,
-    sum int
+    cid     int,
+    sum     int,
+    parent  int
 );
 
 CREATE TABLE members (
