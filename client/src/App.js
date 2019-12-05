@@ -10,16 +10,6 @@ function App() {
     const [displayedNodes, setDisplayedNodes] = useState([])
     const [parent, setParent] = useState(-1)
 
-    useEffect(() => {
-        // code to run on component mount
-        axios.get("http://localhost:5000/communities?parent=-1")
-            .then(resp => {
-                let data = resp.data[0]
-                let root = <CommunityNode id={data.cid} data={data} displayNodes={showNodes} />
-                setDisplayedNodes([root])
-            })
-      }, [])
-
     const showNodes = (nodeDataList, parentId, showMembers) => {
         let renderedNodes = []
         if (showMembers) {
@@ -42,6 +32,16 @@ function App() {
             })            
         })
     }
+
+    useEffect(() => {
+        // code to run on component mount
+        axios.get("http://localhost:5000/communities?parent=-1")
+            .then(resp => {
+                let data = resp.data[0]
+                let root = <CommunityNode id={data.cid} data={data} displayNodes={showNodes} />
+                setDisplayedNodes([root])
+            })
+      }, [])
     
     return (
      <div className="App">

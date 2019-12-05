@@ -3,8 +3,8 @@
     color: #282c34;
     border-radius: 50%;
     font-size: 20px;
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -31,8 +31,8 @@
 
 .communityNode:hover {
     background-color: #E78F8E;
-    width: 225px;
-    height: 225px;
+    width: 200px;
+    height: 200px;
 }
 
 .communityNodes_column {
