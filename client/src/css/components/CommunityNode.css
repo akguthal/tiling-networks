@@ -1,0 +1,29 @@
+.communityNode {
+    background-color: #9FC2CC;
+    color: #282c34;
+    border-radius: 50%;
+    font-size: 20px;
+    width: 200px;
+    height: 200px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    margin: 20px;
+    border: 5px solid #383F51;
+}
+
+.communityNode_name {
+    font-size: 25px;
+    font-weight: 700;
+    color: #383F51;
+    margin-top: 0px;
+}
+
+.communityNode_count {
+    font-size: 18px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: #383F51;
+}
