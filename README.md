@@ -14,7 +14,7 @@ cd server
 python3 server.py
 ```
 
-Finally, to run the client, run the commands below:
+Finally, to run the client, run the below commands in a separate terminal window:
 
 ```
 cd client

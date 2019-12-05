@@ -46,7 +46,7 @@ for i in range(len(community_list)) :
 
 total_sum = 0
 for entry in community_dict :
-    total_sum += community_dict[entry][0]
+    total_sum += community_dict[entry][1]
 
 community_dict[0] = (0, total_sum, -1, False)
 
@@ -64,7 +64,7 @@ mid = 0
 for i in range(len(community_list)):
     c = community_list[i]
     for entry in c:
-        member = (mid, entry, value_dictionary[entry], i)
+        member = (mid, entry, value_dictionary[entry], i+1)
         query = "INSERT INTO members (mid, member, value, community) VALUES (%s, %s, %s, %s);" % (member[0], "'"+member[1]+"'", member[2], member[3])
         cursor.execute(query)
         mid = mid + 1

@@ -14,9 +14,10 @@
   height: 40vmin;
 }
 
-.communityNodesList {
+.communityNodesList, .memberNodesList {
   display: flex;
   justify-content: center;
+  align-items: center;
   width: 80%;
   flex-wrap: wrap;
 }

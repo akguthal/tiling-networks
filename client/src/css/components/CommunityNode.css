@@ -12,6 +12,7 @@
     cursor: pointer;
     margin: 20px;
     border: 5px solid #383F51;
+    transition: all 300ms;
 }
 
 .communityNode_name {
@@ -27,3 +28,20 @@
     margin-bottom: 0px;
     color: #383F51;
 }
+
+.communityNode_expanded {
+    background-color: #E78F8E;
+    width: 250px;
+    height: 250px;
+}
+
+.communityNodes_column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.break {
+    flex-basis: 100%;
+    height: 0;
+  }
