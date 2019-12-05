@@ -31,19 +31,29 @@ def members():
     data = cursor.fetchall()
     return jsonify(data)
 
-@app.route('/communities')
-def communities():
-    query = 'SELECT * FROM communities'
+@app.route('/communities', defaults={'cid': None})
+@app.route('/communities/<cid>')
+def communities(cid):
+    if cid == None: # get communities by parent
+        query = 'SELECT * FROM communities'
 
-    if request.args.get('parent'):
-        query += ' WHERE parent = %(parent)s;'
-        cursor.execute(query, { 'parent': request.args.get('parent') })
-    else:
-        query += ';'
-        cursor.execute(query)
+        if request.args.get('parent'):
+            query += ' WHERE parent = %(parent)s;'
+            cursor.execute(query, { 'parent': request.args.get('parent') })
+        else:
+            query += ';'
+            cursor.execute(query)
 
-    data = cursor.fetchall()
-    return jsonify(data)
+        data = cursor.fetchall()
+        return jsonify(data)
+    else: # get communities by ID
+        query = 'SELECT * FROM communities WHERE cid = %(cid)s;'
+        cursor.execute(query, { 'cid': cid })
+        data = cursor.fetchall()
+        if data == []:
+            return jsonify({})
+        else:
+            return jsonify(data[0])
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
