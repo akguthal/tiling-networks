@@ -12,6 +12,7 @@
 3. Start the paper draft
     - set up LaTeX
     - import and expand sections from poster
+    - add other paper sections
 
 ## Akshay
 1. write the architecture section for the poster (hopefully with pictures)
