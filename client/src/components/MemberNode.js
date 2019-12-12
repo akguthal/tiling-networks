@@ -8,7 +8,7 @@ function MemberNode(props) {
     return (
         <div className="memberNode">
             <p className="memberNode_name">{data.member}</p>
-            <p className="memberNode_value">Value: {data.value}</p>
+            {/* <p className="memberNode_value">Value: {data.value}</p> */}
         </div>
   );
 }
