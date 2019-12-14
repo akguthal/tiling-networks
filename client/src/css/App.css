@@ -44,3 +44,8 @@
 .backButton:focus {
   outline: none;
 }
+
+.description {
+  width: 60%;
+  margin-top: 0px;
+}

@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS members;
 
 CREATE TABLE communities (
     cid     int,
-    sum     int,
+    aggr    int,
     parent  int,
     leaf    boolean
 );

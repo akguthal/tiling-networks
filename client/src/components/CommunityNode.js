@@ -31,7 +31,7 @@ function CommunityNode(props) {
     return (
         <div className="communityNode" onClick={handleClick}>
             <p className="communityNode_name">{data.cid}</p>
-            <p className="communityNode_count">Count: {data.sum}</p>
+            <p className="communityNode_count">Count: {data.aggr}</p>
         </div>
   );
 }

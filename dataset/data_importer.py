@@ -2,71 +2,102 @@ import networkx as nx
 from networkx.algorithms import community
 import itertools
 import psycopg2 as db
+import pickle
+import os.path
 
-# INITIALIZE TABLES
-conn = db.connect(user='tiling_networks_user', password='password', dbname='tiling_networks', host='127.0.0.1', port='5432')
-cursor = conn.cursor()
-cursor.execute(open("init.sql", "r").read())
-conn.commit()
+def import_into_db(nodes_to_parents, groups_with_elements):
+    conn = db.connect(user='tiling_networks_user', password='password', dbname='tiling_networks', host='127.0.0.1', port='5432')
+    cursor = conn.cursor()
+    cursor.execute(open("init.sql", "r").read())
+    conn.commit()
 
-# GENERATE DUMMY DATA
-G = nx.read_adjlist("./adjacency-demo.txt")
+    cid = 0
+    lookup_cid = {}
 
-k = 4
-comp = community.girvan_newman(G)
-limited = itertools.takewhile(lambda c: len(c) <= k, comp)
-for communities in limited:
-    community_list = tuple(sorted(c) for c in communities)
+    for key in nodes_to_parents:
+        lookup_cid[key] = cid
 
-value_dictionary = {
-    'a'   : 10,
-    'b'   : 25,
-    'c'   : 30,
-    'd'   : 10,
-    'e'   : 20,
-    'i'   : 5,
-    'ii'  : 2,
-    'iii' : 3,
-    'iv'  : 4,
-    'v'   : 9,
-    '1'   : 10,
-    '2'   : 15,
-    '3'   : 20,
-    '4'   : 25,
-    '5'   : 5
-}
+        is_leaf = (key not in nodes_to_parents.values()) # no nodes have this node as a parent
 
-community_dict = {}
-for i in range(len(community_list)) :
-    comm_aggregate = 0 # we're going to aggregate sums as an example
-    for member in community_list[i] :
-        comm_aggregate += value_dictionary[member]
+        parent_cid = -1
+        if nodes_to_parents[key] != -1:
+            parent_cid = lookup_cid[nodes_to_parents[key]]
 
-    community_dict[i+1] = (i+1, comm_aggregate, 0, True)
-
-total_sum = 0
-for entry in community_dict :
-    total_sum += community_dict[entry][1]
-
-community_dict[0] = (0, total_sum, -1, False)
+        if is_leaf:
+            members = groups_with_elements[key]
+            for member in members:
+                query = "INSERT INTO members (mid, member, value, community) VALUES (%s, %s, %s, %s);" % (member, "'"+member+"'", 1, cid)
+                cursor.execute(query)
 
 
-# INSERT DATA INTO THE DATABASE
-
-# table for communities
-for c in community_dict.items() :
-    item = ', '.join(map(str,c[1]))
-    query = "INSERT INTO communities (cid, sum, parent, leaf) VALUES (%s);" % item
-    cursor.execute(query)
-
-# table for members
-mid = 0
-for i in range(len(community_list)):
-    c = community_list[i]
-    for entry in c:
-        member = (mid, entry, value_dictionary[entry], i+1)
-        query = "INSERT INTO members (mid, member, value, community) VALUES (%s, %s, %s, %s);" % (member[0], "'"+member[1]+"'", member[2], member[3])
+        entry = (cid, len(groups_with_elements[key]), parent_cid, is_leaf)
+        query = "INSERT INTO communities (cid, aggr, parent, leaf) VALUES (%s);" % ', '.join(map(str,entry))
         cursor.execute(query)
-        mid = mid + 1
 
-conn.commit()
+        cid += 1
+
+    conn.commit()
+
+def run_gn():
+    f = open("email-Eu-core.txt","r")
+    o = open("email-Eu-core-short.txt","w")
+    for _ in range(2000) : # take subset of large network
+        lineout = f.readline()
+        o.write(lineout)
+    G = nx.read_adjlist("./email-Eu-core-short.txt")
+    print("graph assembled")
+    print("number of nodes:",nx.number_of_nodes(G))
+    print("number of edges:",nx.number_of_edges(G))
+
+    comp = community.girvan_newman(G)
+    k = 10
+    gn_iterations = []
+    iteration = {}    
+
+    for iteration in itertools.islice(comp, k):
+        gn_iterations.append(tuple(sorted(c) for c in iteration))
+
+    file = open('gn.txt', 'wb')
+    pickle.dump(gn_iterations, file)
+    file.close()
+
+    return gn_iterations    
+
+
+if os.path.isfile('gn.txt'):
+    file = open('gn.txt', 'rb')
+    gn_iterations = pickle.load(file)
+    file.close()
+else:
+    gn_iterations = run_gn()
+
+all_groups_to_parent = {} # map each group (node in tree) to its parent
+all_groups_to_elements = {}
+group_ids_prev_iteration = []
+for i in range(0, len(gn_iterations), 2):
+    gn_iteration = gn_iterations[i]
+    group_ids_this_iteration = []
+    for group in gn_iteration:
+        group_id = (group[0], len(group)) # identify each node in our tree uniquely by (first_element, size)
+        group_ids_this_iteration.append(group_id) # keep track of all groups looked at this iteration
+        all_groups_to_elements[group_id] = group
+
+        if group_id not in all_groups_to_parent:
+
+            all_groups_to_elements[group_id] = group
+
+            if i == 0: # root
+                all_groups_to_parent[group_id] = -1
+
+            # search the last iteration's groups to find the parent (just check the first element in the group)
+            for group_to_check in group_ids_prev_iteration:
+                if group[0] in all_groups_to_elements[group_to_check]:
+                    parent_id = group_to_check
+                    all_groups_to_parent[group_id] = parent_id
+                    break
+
+    group_ids_prev_iteration = group_ids_this_iteration
+
+
+import_into_db(all_groups_to_parent, all_groups_to_elements)
+

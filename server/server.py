@@ -6,6 +6,8 @@ from flask_cors import CORS
 import psycopg2 as db
 from psycopg2.extras import RealDictCursor
 
+import time
+
 app = Flask(__name__)
 CORS(app)
 
@@ -19,6 +21,7 @@ def index():
 
 @app.route('/members')
 def members():
+    start_time = time.time()
     query = 'SELECT * FROM members'
 
     if request.args.get('community'):
@@ -29,11 +32,13 @@ def members():
         cursor.execute(query)
 
     data = cursor.fetchall()
+    print("--- %s ms ---" % (time.time()*1000 - start_time*1000))
     return jsonify(data)
 
 @app.route('/communities', defaults={'cid': None})
 @app.route('/communities/<cid>')
 def communities(cid):
+    start_time = time.time()
     if cid == None: # get communities by parent
         query = 'SELECT * FROM communities'
 
@@ -45,11 +50,13 @@ def communities(cid):
             cursor.execute(query)
 
         data = cursor.fetchall()
+        print("--- %s ms ---" % (time.time()*1000 - start_time*1000))
         return jsonify(data)
     else: # get communities by ID
         query = 'SELECT * FROM communities WHERE cid = %(cid)s;'
         cursor.execute(query, { 'cid': cid })
         data = cursor.fetchall()
+        print("--- %s ms ---" % (time.time()*1000 - start_time*1000))
         if data == []:
             return jsonify({})
         else:

@@ -37,9 +37,8 @@ function App() {
         // code to run on component mount
         axios.get("http://localhost:5000/communities?parent=-1")
             .then(resp => {
-                let data = resp.data[0]
-                let root = <CommunityNode id={data.cid} data={data} displayNodes={showNodes} />
-                setDisplayedNodes([root])
+                let nodes = resp.data.map(d => <CommunityNode id={d.cid} data={d} displayNodes={showNodes} />)
+                setDisplayedNodes(nodes)
             })
       }, [])
     
@@ -48,6 +47,7 @@ function App() {
         <h1>
             Tiling Networks
         </h1>
+        <p class="description">This application is a novel way to explore large networks. Each blue node represents a community of members, and each white node represents an individual member. For community nodes, the count shows how many members are in that community.</p>
         <div className="communityNodesList">{displayedNodes}</div>
         { parent > -1 && <button className="backButton" onClick={goUpALevel}>Go Up</button> }
     </div>
